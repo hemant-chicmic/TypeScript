@@ -11,7 +11,7 @@ let Board : string[][] ;
 let allWinnings : number[][][] ;   // // it is an array contains the all possible wiining combination 
 
 
-
+console.log("testingcommit");
 // // function to initialize the board with empty string
 function initializeBoard() : void 
 {
