@@ -3,12 +3,15 @@
 
 import * as  prompt from 'prompt' ; 
 
+
 let SinglePlayer:number = 0 ;  // determine whether it is singleor multiplayer mode
 let boardSize:number = 0 ;   // size of the board
+
 
 let Board : string[][] ; 
 // let allWinnings : string[][] ; 
 let allWinnings : number[][][] ;   // // it is an array contains the all possible wiining combination 
+
 
 
 console.log("testingcommit");
@@ -138,96 +141,135 @@ function checkWin( player : string ) : boolean
 
 
 
+// AI's turn using a simple heuristic algorithm
+function AiTurn(): void 
+{
+    let emptyCells = [];
+    for (let i = 0; i < boardSize; i++) 
+    {
+        for (let j = 0; j < boardSize; j++) 
+        {
+            if (Board[i][j] === ' ') emptyCells.push([i, j]);
+        }
+    }
+    // Check if AI can win in the next move
+    for (let i = 0; i < emptyCells.length; i++) 
+    {
+        const [x, y] = emptyCells[i];
+        Board[x][y] = 'O';
+        if (checkWin('O')) return;
+        Board[x][y] = ' ';
+    }
+    // Check if player can win in the next move and block it
+    for (let i = 0; i < emptyCells.length; i++) 
+    {
+        const [x, y] = emptyCells[i];
+        Board[x][y] = 'X';
+        if (checkWin('X')) 
+        {
+            Board[x][y] = 'O';
+            return;
+        }
+        Board[x][y] = ' ';
+    }
+    // If neither winning nor blocking, make a random move
+    const randomIndex = Math.floor(Math.random() * emptyCells.length);
+    const randomCell = emptyCells[randomIndex];
+    const [x, y] = randomCell;
+    Board[x][y] = 'O';
+}
+
+
+
+
+
+
+
+
+
 
 
 // // //  Implemeted using MiniMax algo 
 // // // it is for ai turn when user play in single player mode
 
+// function AiTurn() : void 
+// {
+//     let bestScore = -Infinity;
+//     // let move ; 
+//     let move: { i: number, j: number } | undefined = undefined; 
 
-
-
-
-
-
-
-function AiTurn() : void 
-{
-    let bestScore = -Infinity;
-    // let move ; 
-    let move: { i: number, j: number } | undefined = undefined; 
-
-    // Iterate through all empty cells
-    for(let i=0; i<boardSize; i++) 
-    {
-        for(let j=0; j<boardSize; j++) 
-        {
-            if(Board[i][j] === ' ') 
-            {
-                Board[i][j] = 'O';
-                let score = minimax(Board, 0, false);
-                Board[i][j] = ' ';
-                console.log(score) ; 
-                if(score > bestScore) 
-                {
-                    bestScore = score;
-                    move = {i, j};
-                }
-            }
-        }
-    }
-    // Board[move.i][move.j] = 'O'; // //  shows warning as error but code works
-    if (move !== undefined) Board[move.i][move.j] = 'O';
-    else {
-        console.error("No available moves for AI.");
-    }
-}
-// // // minimax algorithm to find the best possible move on 
-function minimax(board: string[][], depth: number, isMaximizing: boolean): number 
-{
-    // Check if the game is over or if it's a terminal state
-    if(checkWin('X'))  return -1;
-    else if(checkWin('O'))  return 1;
-    else if(isBoardFull())  return 0;
-    console.log(depth) ; 
-    if(isMaximizing) 
-    {
-        // Maximizing player's turn for player 'O' or Ai turn
-        let bestScore = -Infinity;
-        for(let i=0; i<boardSize; i++) 
-        {
-            for(let j=0; j<boardSize; j++) 
-            {
-                if(board[i][j] === ' ') 
-                {
-                    board[i][j] = 'O'; 
-                    let score = minimax(board, depth+1, false);
-                    board[i][j] = ' '; 
-                    bestScore = Math.max(score, bestScore);
-                }
-            }
-        }
-        return bestScore;
-    } 
-    else 
-    { 
-        // Minimizing player's turn forplayer 'X'
-        let bestScore = Infinity;
-        for(let i=0; i<boardSize; i++) 
-        {
-            for(let j=0; j<boardSize; j++) 
-            {
-                if(board[i][j] === ' ') 
-                {
-                    board[i][j] = 'X'; 
-                    let score = minimax(board, depth+1, true);
-                    board[i][j] = ' '; 
-                    bestScore = Math.min(score, bestScore);
-                }
-            }
-        }
-        return bestScore;
-    }
-}
+//     // Iterate through all empty cells
+//     for(let i=0; i<boardSize; i++) 
+//     {
+//         for(let j=0; j<boardSize; j++) 
+//         {
+//             if(Board[i][j] === ' ') 
+//             {
+//                 Board[i][j] = 'O';
+//                 let score = minimax(Board, 0, false);
+//                 Board[i][j] = ' ';
+//                 console.log(score) ; 
+//                 if(score > bestScore) 
+//                 {
+//                     bestScore = score;
+//                     move = {i, j};
+//                 }
+//             }
+//         }
+//     }
+//     // Board[move.i][move.j] = 'O'; // //  shows warning as error but code works
+//     if (move !== undefined) Board[move.i][move.j] = 'O';
+//     else {
+//         console.error("No available moves for AI.");
+//     }
+// }
+// // // // minimax algorithm to find the best possible move on 
+// function minimax(board: string[][], depth: number, isMaximizing: boolean): number 
+// {
+//     // Check if the game is over or if it's a terminal state
+//     if(checkWin('X'))  return -1;
+//     else if(checkWin('O'))  return 1;
+//     else if(isBoardFull())  return 0;
+//     console.log(depth) ; 
+//     if(isMaximizing) 
+//     {
+//         // Maximizing player's turn for player 'O' or Ai turn
+//         let bestScore = -Infinity;
+//         for(let i=0; i<boardSize; i++) 
+//         {
+//             for(let j=0; j<boardSize; j++) 
+//             {
+//                 if(board[i][j] === ' ') 
+//                 {
+//                     board[i][j] = 'O'; 
+//                     let score = minimax(board, depth+1, false);
+//                     board[i][j] = ' '; 
+//                     bestScore = Math.max(score, bestScore);
+//                 }
+//             }
+//         }
+//         return bestScore;
+//     } 
+//     else 
+//     { 
+//         // Minimizing player's turn forplayer 'X'
+//         let bestScore = Infinity;
+//         for(let i=0; i<boardSize; i++) 
+//         {
+//             for(let j=0; j<boardSize; j++) 
+//             {
+//                 if(board[i][j] === ' ') 
+//                 {
+//                     board[i][j] = 'X'; 
+//                     let score = minimax(board, depth+1, true);
+//                     board[i][j] = ' '; 
+//                     bestScore = Math.min(score, bestScore);
+//                 }
+//             }
+//         }
+//         return bestScore;
+//     }
+// }
 
 
 
